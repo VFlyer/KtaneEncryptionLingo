@@ -125,6 +125,9 @@ public class EncryptionLingoScript : MonoBehaviour
     private IEnumerator AnimateCurrentQuery(string word, QueryState[] qry)
     {
         _isQueryAnimating = true;
+        _queryIx = _pastQueries.Count;
+        SetScreen(_currentInput, _currentEncryption);
+
         var corCount = 0;
         var qryLights = "";
         var soundNames = new string[] { "None", "Correct", "Close" };
@@ -133,10 +136,10 @@ public class EncryptionLingoScript : MonoBehaviour
         Debug.LogFormat("[Encryption Lingo #{0}] Queried {1} with result {2}.", _moduleId, word, qryLights);
         for (int i = 0; i < 5; i++)
         {
-            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[(int)qry[i]];
-            if ((int)qry[i] == 1)
+            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[(int) qry[i]];
+            if ((int) qry[i] == 1)
                 corCount++;
-            Audio.PlaySoundAtTransform(soundNames[(int)qry[i]], transform);
+            Audio.PlaySoundAtTransform(soundNames[(int) qry[i]], transform);
             yield return new WaitForSeconds(0.2f);
         }
         if (corCount == 5)
@@ -259,7 +262,7 @@ public class EncryptionLingoScript : MonoBehaviour
     private void SetScreen(string input, EncryptionMethods enc, QueryState[] qry = null)
     {
         for (int i = 0; i < QueryStateLeds.Length; i++)
-            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[qry == null ? 3 : (int)qry[i]];
+            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[qry == null ? 3 : (int) qry[i]];
         for (int i = 0; i < 5; i++)
         {
             if (input.Length <= i)
@@ -371,7 +374,7 @@ public class EncryptionLingoScript : MonoBehaviour
     private void SetEncryptions()
     {
         _letterOrder = Enumerable.Range(0, 26).ToArray().Shuffle();
-        _currentEncryption = (EncryptionMethods)Rnd.Range(0, Enum.GetValues(typeof(EncryptionMethods)).Length);
+        _currentEncryption = (EncryptionMethods) Rnd.Range(0, Enum.GetValues(typeof(EncryptionMethods)).Length);
         if (_currentEncryption == EncryptionMethods.Maritime)
         {
             Debug.LogFormat("[Encryption Lingo #{0}] Chosen encryption method: Maritime Flags", _moduleId);
@@ -520,6 +523,7 @@ public class EncryptionLingoScript : MonoBehaviour
             ButtonImages[i].SetActive(true);
             yield return new WaitForSeconds(0.025f);
         }
+        _animation = null;
     }
 
 #pragma warning disable 414
@@ -528,13 +532,76 @@ public class EncryptionLingoScript : MonoBehaviour
 
     private IEnumerator ProcessTwitchCommand(string command)
     {
-        var m = Regex.Match(command, @"^\s*([A-C][1-3]\s*)+\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        if (m.Success)
+        // First, parse all of the commands and represent them as TpCommand objects
+        var commandPieces = command.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var buttonsToPress = new List<KMSelectable>();
+        Match m;
+
+        foreach (var piece in commandPieces)
         {
-            var pieces = m.Groups[1].Captures.Cast<Capture>().Select(c => c.Value.Trim()).ToArray();
-            var btns = pieces.Select(b => SqButtonSels[b[0] >= 'A' && b[0] <= 'C' ? b[0] - 'A' : b[0] - 'a' + 3 * (b[1] - '1')]).ToArray();
-            yield return null;
-            yield return btns;
+            if (Regex.IsMatch(piece, @"^\s*q(?:uery)?\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                buttonsToPress.Add(QuerySel);
+
+            else if ((m = Regex.Match(piece, @"^\s*(?:up?|(?<d>d(?:own)?))\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+                buttonsToPress.Add(LetterArrowSels[m.Groups["d"].Success ? 1 : 0]);
+
+            else if ((m = Regex.Match(piece, @"^\s*(?:l(?:eft)?|(?<r>r(?:ight)?))\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+                buttonsToPress.Add(PastSubArrowSels[m.Groups["r"].Success ? 1 : 0]);
+
+            else if ((m = Regex.Match(piece, @"^\s*(?<x>[A-C])(?<y>[1-3])\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+                buttonsToPress.Add(SqButtonSels[m.Groups["x"].Value.ToUpperInvariant()[0] - 'A' + 3 * (m.Groups["y"].Value[0] - '1')]);
+
+            else
+                yield break;
         }
+        yield return null;
+
+        foreach (var btn in buttonsToPress)
+        {
+            btn.OnInteract();
+            yield return new WaitForSeconds(.1f);
+            while (_isQueryAnimating)
+                yield return null;
+        }
+    }
+
+    private IEnumerator TwitchHandleForcedSolve()
+    {
+        while (_animation != null)
+            yield return true;
+
+        var ix = 0;
+        while (ix < _currentInput.Length && _currentInput[ix] == _correctWord[ix])
+            ix++;
+
+        while (_currentInput.Length > ix)
+        {
+            while (_currentPage != 2)
+            {
+                LetterArrowSels[_currentPage ^ 1].OnInteract();
+                while (_animation != null)
+                    yield return true;
+            }
+            SqButtonSels[8].OnInteract();
+            yield return new WaitForSeconds(.1f);
+        }
+
+        while (_currentInput.Length < _correctWord.Length)
+        {
+            var correctLetterIx = Array.IndexOf(_letterOrder, _correctWord[_currentInput.Length] - 'A');
+            var correctPage = correctLetterIx / 9;
+            if (correctPage != _currentPage)
+            {
+                LetterArrowSels[((_currentPage - correctPage + 3) % 3) % 2].OnInteract();       // don’t ask
+                while (_animation != null)
+                    yield return true;
+            }
+            SqButtonSels[correctLetterIx - 9 * correctPage].OnInteract();
+            yield return new WaitForSeconds(.1f);
+        }
+
+        QuerySel.OnInteract();
+        while (!_moduleSolved || _isQueryAnimating)
+            yield return true;
     }
 }
