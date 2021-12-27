@@ -21,6 +21,8 @@ public class EncryptionLingoScript : MonoBehaviour
     public GameObject[] ButtonImages;
     public Texture DeleteTexture;
     public GameObject[] QueryImages;
+    public TextMesh[] ScreenText;
+    public GameObject[] ScreenTextObjs;
 
     public Texture[] MaritimeTextures;
     public Texture[] BrailleTextures;
@@ -83,6 +85,11 @@ public class EncryptionLingoScript : MonoBehaviour
 
         _correctWord = Data.GenerousWordList.PickRandom();
         Debug.LogFormat("[Encryption Lingo #{0}] Chosen word: {1}", _moduleId, _correctWord);
+        for (int i = 0; i < _correctWord.Length; i++)
+        {
+            ScreenText[i].text = _correctWord.Substring(i, 1);
+            ScreenTextObjs[i].SetActive(false);
+        }
         Module.OnActivate += delegate () { _animation = StartCoroutine(SetButtons()); };
         SetEncryptions();
         foreach (var img in QueryImages)
@@ -113,7 +120,6 @@ public class EncryptionLingoScript : MonoBehaviour
                 Module.HandleStrike();
                 return false;
             }
-            Debug.LogFormat("[Encryption Lingo #{0}] Queried {1}.", _moduleId, _currentInput);
             _pastQueries.Add(_currentInput);
             _pastEncryptions.Add(_currentEncryption);
             _pastQueryStates.Add(QueryWord(_currentInput));
@@ -144,17 +150,27 @@ public class EncryptionLingoScript : MonoBehaviour
         }
         if (corCount == 5)
         {
-            Module.HandlePass();
+            
             _moduleSolved = true;
             Audio.PlaySoundAtTransform("Solve", transform);
             Debug.LogFormat("[Encryption Lingo #{0}] You guessed the correct word, {1}. Module solved!", _moduleId, _correctWord);
+            for (int i = 0; i < 5; i++)
+            {
+                QueryImages[i].SetActive(false);
+                yield return new WaitForSeconds(0.025f);
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                ScreenTextObjs[i].SetActive(true);
+                yield return new WaitForSeconds(0.025f);
+            }
+            Module.HandlePass();
             yield break;
         }
         yield return new WaitForSeconds(1.5f);
         for (int i = 0; i < 5; i++)
             QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[3];
         _currentInput = "";
-        _queryIx++;
         foreach (var img in QueryImages)
             img.SetActive(false);
         SetEncryptions();
