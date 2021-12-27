@@ -404,6 +404,7 @@ GameObject:
   - component: {fileID: 4926587374298224}
   - component: {fileID: 23690679263742516}
   - component: {fileID: 102711010989640174}
+  - component: {fileID: 114425913297879978}
   m_Layer: 0
   m_Name: ScreenText
   m_TagString: Untagged
@@ -841,6 +842,7 @@ GameObject:
   - component: {fileID: 4326082064817272}
   - component: {fileID: 23250631048040256}
   - component: {fileID: 102891290166486196}
+  - component: {fileID: 114314971972156354}
   m_Layer: 0
   m_Name: ScreenText
   m_TagString: Untagged
@@ -895,6 +897,7 @@ GameObject:
   - component: {fileID: 4751022916781104}
   - component: {fileID: 23463460778891258}
   - component: {fileID: 102116253914607130}
+  - component: {fileID: 114302507637781922}
   m_Layer: 0
   m_Name: ScreenText
   m_TagString: Untagged
@@ -912,6 +915,7 @@ GameObject:
   - component: {fileID: 4281634358460544}
   - component: {fileID: 23505852745438518}
   - component: {fileID: 102268280633712338}
+  - component: {fileID: 114576914840118684}
   m_Layer: 0
   m_Name: ScreenText
   m_TagString: Untagged
@@ -1124,6 +1128,7 @@ GameObject:
   - component: {fileID: 4228575103603292}
   - component: {fileID: 23626513431190400}
   - component: {fileID: 102815945578011954}
+  - component: {fileID: 114926153791143514}
   m_Layer: 0
   m_Name: ScreenText
   m_TagString: Untagged
@@ -4884,6 +4889,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HighlightScale: {x: 1, y: 1, z: 1}
   OutlineAmount: 0
+--- !u!114 &114302507637781922
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1681980085240488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114306306058779220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4923,6 +4941,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HighlightScale: {x: 1, y: 1, z: 1}
   OutlineAmount: 0
+--- !u!114 &114314971972156354
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1657608041680000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114357851260472752
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4983,6 +5014,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Transparent/Mobile Diffuse Underlay200
+--- !u!114 &114425913297879978
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1309779666522268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114463580304362696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5206,6 +5250,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Transparent/Mobile Diffuse Underlay200
+--- !u!114 &114576914840118684
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1764904239607026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114601434976454682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5900,6 +5957,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HighlightScale: {x: 1, y: 1, z: 1}
   OutlineAmount: 0
+--- !u!114 &114926153791143514
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1884787904286798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114948581075816874
 MonoBehaviour:
   m_ObjectHideFlags: 1
