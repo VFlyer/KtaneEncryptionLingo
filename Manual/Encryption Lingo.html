@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1">
+        <title>Encryption Lingo — Keep Talking and Nobody Explodes Module</title>
+        <link rel="stylesheet" type="text/css" href="css/font.css">
+        <link rel="stylesheet" type="text/css" href="css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <script src="js/ktane-utils.js"></script>
+		<style>
+		.empty {
+			border: none;
+		}
+		.enc-lingo-table {
+			margin: 0em auto;
+			text-align: center;
+		}
+		.enc-lingo-table img {
+			height: 30px;
+		}
+		.enc-lingo-table th {
+			font-size: 10pt;
+		}
+		</style>
+    </head>
+    <body>
+        <div class="section">
+            <div class="page page-bg-05">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">Encryption Lingo</span>
+                </div>
+                <div class="page-content">
+                    <img src="img/Component/Encryption Lingo.svg" class="diagram">
+                    <h2>On the Subject of Encryption Lingo</h2>
+                    <p class="flavour-text">Encryption Lingo flavor text</p>
+					<ul>
+                    <li>A five-letter word has been randomly chosen and must be guessed. Query the solution word to disarm the module.</li>
+					<li>A 3 by 3 grid of buttons contains the letters of the English alphabet in various encodings. Pressing the up and down arrows will scroll through three different pages of letters.</li>
+					<li>To query a word, spell it out by pressing the buttons labeled with the encoded letter, and press the QUERY button. The button labeled DEL will delete the last letter from your input. The five screens at the bottom show your current input.</li>
+					<li>All queries must be valid words. Failing to query a valid word, or querying a word that is not five letters long will incur a strike.</li>
+					<li>Pressing the query button will cause the five LEDs below the screens to change color.
+					<ul>
+						<li>If the LED is green, that letter in that position is correct.</li>
+						<li>If the LED is yellow, that letter is present in the word, but not in the correct position.</li>
+						<li>If the LED is red, that letter is not present in the word.</li>
+					</ul></li>
+					<li>You may view past queries by pessing the left and right arrows. The five screens will show the queried word in its respective encoding, as well as the result of the query.</li>
+					<li>Upon querying the correct word, the screens will display the word, and the module will disarm.</li>
+					</ul>
+                </div>
+                <div class="page-footer relative-footer">Page 1 of 2</div>
+            </div>
+			<div class="page page-bg-05">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">Encryption Lingo</span>
+                </div>
+                <div class="page-content">
+					<p>The buttons will be encrypted in one of the following encodings below:</p>
+					<table class="enc-lingo-table empty">
+						<tr>
+							<td class="empty"></td>
+							<th>Maritime</th>
+							<th>Braille</th>
+							<th>Pigpen</th>
+							<th>Sign Language</th>
+							<th>Semaphore</th>
+							<th>Zoni</th>
+							<th>Lombax</th>
+							<th>SGA</th>
+							<th colspan='3'>Boozleglyph</th>
+						</tr>
+					</table>
+				</div>
+				<div class="page-footer relative-footer">Page 2 of 2</div>
+            </div>
+        </div>
+    </body>
+</html>
