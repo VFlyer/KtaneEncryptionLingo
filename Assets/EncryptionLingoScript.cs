@@ -43,6 +43,7 @@ public class EncryptionLingoScript : MonoBehaviour
     private List<string> _pastQueries = new List<string>();
     private List<EncryptionMethods> _pastEncryptions = new List<EncryptionMethods>();
     private List<QueryState[]> _pastQueryStates = new List<QueryState[]>();
+    private List<int> _pastBoozleSets = new List<int>();
     private string _correctWord;
     private Coroutine _animation;
 
@@ -123,6 +124,7 @@ public class EncryptionLingoScript : MonoBehaviour
             _pastQueries.Add(_currentInput);
             _pastEncryptions.Add(_currentEncryption);
             _pastQueryStates.Add(QueryWord(_currentInput));
+            _pastBoozleSets.Add(_boozleSet);
             StartCoroutine(AnimateCurrentQuery(_currentInput, QueryWord(_currentInput)));
         }
         return false;
@@ -132,7 +134,7 @@ public class EncryptionLingoScript : MonoBehaviour
     {
         _isQueryAnimating = true;
         _queryIx = _pastQueries.Count;
-        SetScreen(_currentInput, _currentEncryption);
+        SetScreen(_currentInput, _currentEncryption, false);
 
         var corCount = 0;
         var qryLights = "";
@@ -215,7 +217,7 @@ public class EncryptionLingoScript : MonoBehaviour
                     if (_queryIx > 0)
                     {
                         _queryIx--;
-                        SetScreen(_pastQueries[_queryIx], _pastEncryptions[_queryIx], _pastQueryStates[_queryIx]);
+                        SetScreen(_pastQueries[_queryIx], _pastEncryptions[_queryIx], true, _pastQueryStates[_queryIx]);
                     }
                 }
                 if (btn == 1)
@@ -224,13 +226,9 @@ public class EncryptionLingoScript : MonoBehaviour
                     {
                         _queryIx++;
                         if (_queryIx < _pastQueries.Count)
-                        {
-                            SetScreen(_pastQueries[_queryIx], _pastEncryptions[_queryIx], _pastQueryStates[_queryIx]);
-                        }
+                            SetScreen(_pastQueries[_queryIx], _pastEncryptions[_queryIx], true, _pastQueryStates[_queryIx]);
                         else
-                        {
-                            SetScreen(_currentInput, _currentEncryption);
-                        }
+                            SetScreen(_currentInput, _currentEncryption, true);
                     }
                 }
             }
@@ -245,10 +243,7 @@ public class EncryptionLingoScript : MonoBehaviour
             SqButtonSels[btn].AddInteractionPunch(0.5f);
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
             if (!_moduleSolved && !_isQueryAnimating)
-            {
-                // Debug.LogFormat("[Encryption Lingo #{0}] Pressed {1}.", _moduleId, (btn + _currentPage * 9) == 26 ? "delete" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(_letterOrder[btn + _currentPage * 9], 1));
                 SetInput(btn);
-            }
             return false;
         };
     }
@@ -256,26 +251,24 @@ public class EncryptionLingoScript : MonoBehaviour
     private void SetInput(int btn)
     {
         _queryIx = _pastQueryStates.Count;
-        SetScreen(_currentInput, _currentEncryption);
+        SetScreen(_currentInput, _currentEncryption, false);
         if ((btn + _currentPage * 9) == 26)
         {
             if (_currentInput.Length >= 1)
                 _currentInput = _currentInput.Substring(0, _currentInput.Length - 1);
             for (int i = 0; i < 5; i++)
-            {
                 if (_currentInput.Length <= i)
                     QueryImages[i].SetActive(false);
-            }
         }
         else if (_currentInput.Length != 5)
         {
             _currentInput += "ABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(_letterOrder[btn + _currentPage * 9], 1);
-            SetScreen(_currentInput, _currentEncryption);
+            SetScreen(_currentInput, _currentEncryption, false);
         }
         // Debug.LogFormat("[Encryption Lingo #{0}] Current input: {1}", _moduleId, _currentInput);
     }
 
-    private void SetScreen(string input, EncryptionMethods enc, QueryState[] qry = null)
+    private void SetScreen(string input, EncryptionMethods enc, bool isPast, QueryState[] qry = null)
     {
         for (int i = 0; i < QueryStateLeds.Length; i++)
             QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[qry == null ? 3 : (int) qry[i]];
@@ -306,19 +299,25 @@ public class EncryptionLingoScript : MonoBehaviour
             {
                 foreach (var img in QueryImages)
                     img.transform.localScale = new Vector3(0.125f, 0.125f, 0.1f);
-                if (_boozleSet == 0)
+                if (isPast && _queryIx != _pastQueries.Count)
                 {
-                    QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures1[c];
+                    Debug.Log(_queryIx);
+                    if (_pastBoozleSets[_queryIx] == 0)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures1[c];
+                    if (_pastBoozleSets[_queryIx] == 1)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures2[c];
+                    if (_pastBoozleSets[_queryIx] == 2)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures3[c];
                     continue;
                 }
-                if (_boozleSet == 1)
+                else
                 {
-                    QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures2[c];
-                    continue;
-                }
-                if (_boozleSet == 2)
-                {
-                    QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures3[c];
+                    if (_boozleSet == 0)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures1[c];
+                    if (_boozleSet == 1)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures2[c];
+                    if (_boozleSet == 2)
+                        QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures3[c];
                     continue;
                 }
             }
@@ -446,7 +445,6 @@ public class EncryptionLingoScript : MonoBehaviour
             foreach (var img in QueryImages)
                 img.transform.localScale = new Vector3(0.15f, 0.15f, 0.1f);
         }
-
     }
 
     private IEnumerator SetButtons(bool isStriking = false)
@@ -548,7 +546,7 @@ public class EncryptionLingoScript : MonoBehaviour
 
     private IEnumerator ProcessTwitchCommand(string command)
     {
-        // First, parse all of the commands and represent them as TpCommand objects
+        // Twitch Plays support implemented by Timwi.
         var commandPieces = command.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
         var buttonsToPress = new List<KMSelectable>();
         Match m;
@@ -583,6 +581,7 @@ public class EncryptionLingoScript : MonoBehaviour
 
     private IEnumerator TwitchHandleForcedSolve()
     {
+        // Autosolver implemented by Timwi.
         while (_animation != null)
             yield return true;
 
@@ -615,7 +614,6 @@ public class EncryptionLingoScript : MonoBehaviour
             SqButtonSels[correctLetterIx - 9 * correctPage].OnInteract();
             yield return new WaitForSeconds(.1f);
         }
-
         QuerySel.OnInteract();
         while (!_moduleSolved || _isQueryAnimating)
             yield return true;
