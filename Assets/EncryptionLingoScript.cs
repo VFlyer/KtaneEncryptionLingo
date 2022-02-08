@@ -46,7 +46,6 @@ public class EncryptionLingoScript : MonoBehaviour
     private List<int> _pastBoozleSets = new List<int>();
     private string _correctWord;
     private Coroutine _animation;
-
     private enum EncryptionMethods
     {
         Maritime,
@@ -65,6 +64,7 @@ public class EncryptionLingoScript : MonoBehaviour
         Correct,
         Close
     }
+    private EncryptionMethods?[] _encChecker = new EncryptionMethods?[2];
     private int _currentPage;
     private bool _isQueryAnimating;
     private bool _startup = true;
@@ -135,7 +135,6 @@ public class EncryptionLingoScript : MonoBehaviour
         _isQueryAnimating = true;
         _queryIx = _pastQueries.Count;
         SetScreen(_currentInput, _currentEncryption, false);
-
         var corCount = 0;
         var qryLights = "";
         var soundNames = new string[] { "None", "Correct", "Close" };
@@ -144,15 +143,14 @@ public class EncryptionLingoScript : MonoBehaviour
         Debug.LogFormat("[Encryption Lingo #{0}] Queried {1} with result {2}.", _moduleId, word, qryLights);
         for (int i = 0; i < 5; i++)
         {
-            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[(int) qry[i]];
-            if ((int) qry[i] == 1)
+            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[(int)qry[i]];
+            if ((int)qry[i] == 1)
                 corCount++;
-            Audio.PlaySoundAtTransform(soundNames[(int) qry[i]], transform);
+            Audio.PlaySoundAtTransform(soundNames[(int)qry[i]], transform);
             yield return new WaitForSeconds(0.2f);
         }
         if (corCount == 5)
         {
-            
             _moduleSolved = true;
             Audio.PlaySoundAtTransform("Solve", transform);
             Debug.LogFormat("[Encryption Lingo #{0}] You guessed the correct word, {1}. Module solved!", _moduleId, _correctWord);
@@ -271,7 +269,7 @@ public class EncryptionLingoScript : MonoBehaviour
     private void SetScreen(string input, EncryptionMethods enc, bool isPast, QueryState[] qry = null)
     {
         for (int i = 0; i < QueryStateLeds.Length; i++)
-            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[qry == null ? 3 : (int) qry[i]];
+            QueryStateLeds[i].GetComponent<MeshRenderer>().sharedMaterial = QueryMats[qry == null ? 3 : (int)qry[i]];
         for (int i = 0; i < 5; i++)
         {
             if (input.Length <= i)
@@ -389,7 +387,12 @@ public class EncryptionLingoScript : MonoBehaviour
     private void SetEncryptions()
     {
         _letterOrder = Enumerable.Range(0, 26).ToArray().Shuffle();
-        _currentEncryption = (EncryptionMethods) Rnd.Range(0, Enum.GetValues(typeof(EncryptionMethods)).Length);
+        pickEnc:
+        _currentEncryption = (EncryptionMethods)Rnd.Range(0, Enum.GetValues(typeof(EncryptionMethods)).Length);
+        if (_encChecker.Contains(_currentEncryption))
+            goto pickEnc;
+        _encChecker[1] = _encChecker[0];
+        _encChecker[0] = _currentEncryption;
         if (_currentEncryption == EncryptionMethods.Maritime)
         {
             Debug.LogFormat("[Encryption Lingo #{0}] Chosen encryption method: Maritime Flags", _moduleId);
