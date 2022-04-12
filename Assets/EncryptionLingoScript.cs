@@ -105,6 +105,8 @@ public class EncryptionLingoScript : MonoBehaviour
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         if (!_moduleSolved && !_isQueryAnimating)
         {
+            _queryIx = _pastQueries.Count;
+            SetScreen(_currentInput, _currentEncryption, false);
             if (_currentInput.Length != 5)
             {
                 Debug.LogFormat("[Encryption Lingo #{0}] Queried {1}. Strike.", _moduleId, _currentInput.Length == 0 ? "nothing" : _currentInput + ", which is not a five-letter word");
@@ -299,7 +301,6 @@ public class EncryptionLingoScript : MonoBehaviour
                     img.transform.localScale = new Vector3(0.125f, 0.125f, 0.1f);
                 if (isPast && _queryIx != _pastQueries.Count)
                 {
-                    Debug.Log(_queryIx);
                     if (_pastBoozleSets[_queryIx] == 0)
                         QueryImages[i].GetComponent<MeshRenderer>().material.mainTexture = BoozleglyphTextures1[c];
                     if (_pastBoozleSets[_queryIx] == 1)
