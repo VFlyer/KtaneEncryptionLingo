@@ -11,13 +11,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: EncryptionLingoModule
-  title: Encryption Lingo
-  author: Quinn Wuest
-  description: 'I leckon this lodule will go lell with Letirement.
+  id: AltEncryptionLingoMod
+  title: Faulty Encryption Lingo
+  author: VFlyer, Quinn Wuest
+  description: '"I know I''ve gone too far, but let''s keep going through this rabbit
+    hole and see where it takes us!"
 
 
-    Made by Quinn Wuest'
+    Model by Quinn Wuest
+
+    Coding by VFlyer'
   version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: f6f18bdf9f27cd046b080be70f947a64, type: 3}
